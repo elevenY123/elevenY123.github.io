@@ -2,13 +2,13 @@ name: Website preview checks
 on:
   push:
     branches: [main, repo-homepage]
-    paths: [index.html, evocenter.html, legacy.html, 'site/**', 'Tools/**', 'ArtMotion/*.html', 'IslandBlur/*.html', '.github/workflows/site-check.yml']
+    paths: [index.html, evocenter.html, legacy.html, release.json, '**/release.json', 'site/**', 'Tools/**', 'ArtMotion/*.html', 'IslandBlur/*.html', '.github/workflows/site-check.yml']
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   browser:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4

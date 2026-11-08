@@ -13,6 +13,11 @@ server = ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler,
 Thread(target=server.serve_forever, daemon=True).start()
 url = f'http://127.0.0.1:{server.server_port}/'
 results = []
+scripts_disabled_passed = False
+catalog = json.loads((ROOT / 'site/catalog.json').read_text())['apps']
+assert catalog[0]['version'] == json.loads((ROOT / 'release.json').read_text())['releaseLabel'].replace('测试版','')
+assert catalog[1]['version'] == json.loads((ROOT / 'ArtMotion/release.json').read_text())['releaseLabel']
+assert catalog[2]['version'].lower() == json.loads((ROOT / 'IslandBlur/release.json').read_text())['releaseLabel'].lower()
 try:
     with sync_playwright() as p:
         browser = p.chromium.launch()
@@ -49,6 +54,9 @@ try:
             page.locator('.shot').first.click()
             assert page.locator('#lightbox').is_visible()
             page.locator('#lightbox img').wait_for(state='visible')
+            page.wait_for_function("document.querySelector('#lightbox img').complete && document.querySelector('#lightbox img').naturalWidth > 0")
+            if name in ('iphone','desktop'):
+                page.screenshot(path=str(OUT / f'{name}-lightbox.png'))
             page.locator('#lightbox [data-next]').click()
             assert page.locator('#lightbox-caption').inner_text() == '实机截图 2 / 5'
             page.keyboard.press('ArrowLeft')
@@ -78,8 +86,9 @@ try:
         assert page.locator('.tweak').count() == 3
         assert page.locator('.source-button').count() == 2
         assert page.locator('.detail-link').count() == 3
+        scripts_disabled_passed = True
         context.close(); browser.close()
 finally:
     server.shutdown()
-    (OUT / 'results.json').write_text(json.dumps({'viewports':results,'javascriptDisabledContent':True},ensure_ascii=False,indent=2)+'\n')
+    (OUT / 'results.json').write_text(json.dumps({'viewports':results,'javascriptDisabledContent':scripts_disabled_passed},ensure_ascii=False,indent=2)+'\n')
 print(json.dumps(results))
