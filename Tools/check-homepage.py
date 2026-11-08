@@ -62,6 +62,7 @@ try:
             page.keyboard.press('ArrowLeft')
             assert page.locator('#lightbox-caption').inner_text() == '实机截图 1 / 5'
             page.keyboard.press('Escape')
+            page.wait_for_function("!document.querySelector('#lightbox').open && document.body.style.overflow === ''")
             assert not page.locator('#lightbox').is_visible()
             assert page.evaluate('document.body.style.overflow') == ''
             assert page.locator('.shot').first.evaluate('(el)=>el===document.activeElement')

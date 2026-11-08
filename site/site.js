@@ -84,7 +84,13 @@
     display(shots.indexOf(link)); dialog.showModal();
     document.body.style.overflow = 'hidden';
   }));
-  dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
+  function restorePage() {
+    if (dialog.open) return;
+    document.body.style.overflow = ''; image.removeAttribute('src'); trigger?.focus();
+  }
+  function closeLightbox() { dialog.close(); restorePage(); }
+  dialog.querySelector('[data-close]').addEventListener('click', closeLightbox);
+  dialog.addEventListener('cancel', event => { event.preventDefault(); closeLightbox(); });
   dialog.querySelector('[data-previous]').addEventListener('click', () => display(selected - 1));
   dialog.querySelector('[data-next]').addEventListener('click', () => display(selected + 1));
   dialog.addEventListener('keydown', event => {
@@ -94,9 +100,7 @@
   dialog.addEventListener('click', event => {
     if (event.target !== dialog) return;
     const bounds = dialog.getBoundingClientRect();
-    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeLightbox();
   });
-  dialog.addEventListener('close', () => {
-    document.body.style.overflow = ''; image.removeAttribute('src'); trigger?.focus();
-  });
+  dialog.addEventListener('close', restorePage);
 })();
