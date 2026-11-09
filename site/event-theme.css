@@ -37,14 +37,15 @@ html.gta6 body{background:#140f26;color:#fff5ee}
 .gta6[data-page="detail"] a{color:#ffb3ce}
 .gta6[data-page="detail"] .tabs button[aria-selected="true"]{color:#ffb3ce;border-bottom-color:#ffb3ce}
 @media(max-width:700px){
- .gta6 .event-hero{min-height:365px;background-image:url('events/gta6-2026/hero-small.jpg');background-position:67% center}
+ .gta6 .event-hero{min-height:300px;background-image:url('events/gta6-2026/hero-small.jpg');background-position:67% center}
  .gta6 .event-hero:before{background:linear-gradient(90deg,#1a0c29d9,#21123647 70%),linear-gradient(0deg,#140f26,#140f2600 30%)}
- .event-hero-inner{padding-top:35px;padding-bottom:35px}
- .event-kicker{font-size:9px;letter-spacing:1.5px;margin-bottom:19px}
- .event-title{font-size:58px;letter-spacing:-2.8px;line-height:.95;max-width:340px;margin-bottom:19px}
- .event-description{font-size:12px;letter-spacing:.1px;max-width:270px}
+ .event-hero-inner{padding-top:27px;padding-bottom:27px}
+ .event-kicker{font-size:9px;letter-spacing:1.5px;margin-bottom:17px}
+ .event-title{font-size:44px;letter-spacing:-2px;line-height:.95;max-width:100%;margin-bottom:16px}
+ .event-description{font-size:12px;letter-spacing:.1px;max-width:270px;margin-bottom:17px}
  .event-period{font-size:9px;gap:9px;letter-spacing:.1px}
- .gta6 .intro h1{font-size:27px}
+ .gta6 .intro h1{font-size:25px}
+ .gta6 .intro .eyebrow{display:none}
  .gta6 .intro{padding-top:24px}
 }
-@media(max-width:370px){.event-title{font-size:51px}.event-kicker{font-size:8px;letter-spacing:1px}.event-period{max-width:290px}}
+@media(max-width:370px){.event-title{font-size:38px}.event-kicker{font-size:8px;letter-spacing:1px}.event-period{max-width:290px}}

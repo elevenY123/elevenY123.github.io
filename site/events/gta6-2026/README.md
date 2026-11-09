@@ -7,6 +7,7 @@ The event is active from **2026-11-10 00:00 Asia/Shanghai** until, but not inclu
 - Store: `Tools/event-theme.py` reconciles Sileo icons, native depiction headers,
   featured banners and APT checksums. `.github/workflows/event-theme.yml` runs at
   both boundaries with retries, as well as on a daily reconciliation schedule.
+  The event workflow disables itself after the final successful restoration.
 - The workflow explicitly requests a Pages build after the bot push. It does not
   rely on a bot commit triggering a second workflow.
 - Original image files stay untouched. `normal.json` retains normal metadata and
