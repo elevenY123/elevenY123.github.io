@@ -11,6 +11,7 @@ on:
 permissions:
   contents: write
   pages: write
+  actions: write
 concurrency:
   group: limited-artwork-${{ github.repository }}
   cancel-in-progress: false
@@ -29,6 +30,7 @@ jobs:
       - name: Check reversible theme and package integrity
         run: python Tools/check-event-theme.py
       - name: Reconcile with the ten-day window
+        id: theme
         run: python Tools/event-theme.py --status-file "$RUNNER_TEMP/theme-status.json"
       - name: Commit only owned presentation fields
         run: |
@@ -46,3 +48,15 @@ jobs:
         run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds" --jq '{status, url}'
       - name: Record reconciliation
         run: cat "$RUNNER_TEMP/theme-status.json" >> "$GITHUB_STEP_SUMMARY"
+      - name: Stop the event schedule after restoration
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          from datetime import datetime, timezone
+          with open(os.environ['RUNNER_TEMP'] + '/theme-status.json') as f:
+              status = json.load(f)
+          if datetime.now(timezone.utc) >= datetime.fromisoformat(status['endExclusive']):
+              subprocess.run(['gh', 'api', '--method', 'PUT', 'repos/' + os.environ['GITHUB_REPOSITORY'] + '/actions/workflows/event-theme.yml/disable'], check=True)
+          PY
