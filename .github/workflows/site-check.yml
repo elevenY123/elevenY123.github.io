@@ -34,3 +34,11 @@ jobs:
           name: website-previews
           path: site-check-artifacts/
           retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gta6-quick-preview
+          path: |
+            site-check-artifacts/gta6-*-viewport.jpg
+            site-check-artifacts/gta6-results.json
+          retention-days: 7

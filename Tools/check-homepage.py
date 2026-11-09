@@ -39,6 +39,8 @@ try:
                 assert page.locator('html.gta6').count() == 1
                 assert page.locator('.event-hero').is_visible()
                 assert all('/site/events/gta6-2026/' in img.get_attribute('src') for img in page.locator('.app-icon').all())
+                if width < 700:
+                    assert page.locator('.event-hero').bounding_box()['height'] <= 340
             page.locator('.tweak').last.scroll_into_view_if_needed()
             page.wait_for_timeout(300)
             page.evaluate('window.scrollTo(0,0)')
@@ -55,6 +57,8 @@ try:
                     assert bounds['x'] >= 0 and bounds['x'] + bounds['width'] <= width + 1, (name, selector, bounds)
             page.screenshot(path=str(OUT / f'{prefix}{name}.png'), full_page=True)
             page.screenshot(path=str(OUT / f'{prefix}{name}-viewport.png'))
+            if event_at:
+                page.screenshot(path=str(OUT / f'{prefix}{name}-viewport.jpg'), type='jpeg', quality=85)
             page.locator('#search').fill('音乐')
             assert page.locator('.tweak:visible').count() == 1 and page.locator('#artmotion').is_visible()
             page.locator('#search').fill('unmatched-keyword')
@@ -85,6 +89,8 @@ try:
             page.locator('#evocenter .detail-link').click()
             assert 'evocenter.html' in page.url
             assert page.locator('h1').inner_text() == 'Evo Center'
+            if event_at:
+                assert '/site/events/gta6-2026/evocenter-banner.jpg' in page.locator('.banner').get_attribute('src')
             page.locator('.repo-back').click()
             assert page.title() == 'JaySuen Repo · 越狱插件'
             if event_at:
