@@ -46,6 +46,25 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds" --jq '{status, url}'
+      - name: Verify the Pages build before completing the event
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess, time
+          head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          endpoint = 'repos/' + os.environ['GITHUB_REPOSITORY'] + '/pages/builds/latest'
+          for attempt in range(36):
+              build = json.loads(subprocess.check_output(['gh', 'api', endpoint], text=True))
+              status = build.get('status')
+              print('Pages:', status, build.get('commit', '')[:8], flush=True)
+              if build.get('commit') == head:
+                  if status == 'built': break
+                  if status == 'errored': raise RuntimeError(build.get('error'))
+              time.sleep(8)
+          else:
+              raise RuntimeError('Pages build not verified; keep the schedule enabled for its next retry')
+          PY
       - name: Record reconciliation
         run: cat "$RUNNER_TEMP/theme-status.json" >> "$GITHUB_STEP_SUMMARY"
       - name: Stop the event schedule after restoration
